@@ -13,6 +13,10 @@ const PORT = process.env.PORT || 3000;
 app.use('/', express.static(__dirname + '/client'));
 
 let rooms = [];
+//serve an api get all rooms
+app.get('/api/rooms', (req, res) => {
+  res.json(rooms.map((r) => ({ code: r.getCode(), players: r.getPlayersArray() })));
+});
 
 io.on('connection', (socket) => {
   console.log('new connection ', socket.id);
@@ -138,11 +142,13 @@ io.on('connection', (socket) => {
     if (game != undefined) {
       const player = game.findPlayer(socket.id);
       game.disconnectPlayer(player);
-      if (game.players.length == 0) {
-        if (this.rooms != undefined && this.rooms.length !== 0) {
-          this.rooms = this.rooms.filter((a) => a != game);
+      setTimeout(() => {
+        if (game.players.length == 0) {
+          if (rooms != undefined && rooms.length !== 0) {
+            rooms = rooms.filter((a) => a != game);
+          }
         }
-      }
+      }, 10000); // wait 10 seconds before removing the game if no players are left
     }
   });
 });

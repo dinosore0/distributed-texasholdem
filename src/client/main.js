@@ -3,6 +3,39 @@ $(document).ready(function () {
   $('.modal-trigger').leanModal();
   $('.tooltipped').tooltip({ delay: 50 });
 });
+var rooms = [];
+// fetch first time and then Fetch rooms every 5 seconds to update the list
+function updateRoomsList(rooms) {
+  const $list = $('#roomsList .collection');
+  $list.empty();
+  if (rooms.length > 0) {
+    $('#noRooms').hide();
+    $('#roomsList').show();
+    
+    rooms.forEach((room) => {
+      $list.append(
+        `<li class="collection-item">${room.code} - Players: ${room.players.length}</li>`
+      );
+    });
+  } else {
+    $('#noRooms').show();
+    $('#roomsList').hide();
+
+  }
+}
+
+function fetchRoomsAndUpdate() {
+  console.log('Fetching rooms...');
+  fetch('/api/rooms')
+    .then((response) => response.json())
+    .then(updateRoomsList);
+}
+
+// Initial fetch
+fetchRoomsAndUpdate();
+
+// Update every 5 seconds
+setInterval(fetchRoomsAndUpdate, 5000);
 
 var socket = io();
 var gameInfo = null;
