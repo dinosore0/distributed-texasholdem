@@ -41,10 +41,12 @@ var socket = io();
 var gameInfo = null;
 
 socket.on('playerDisconnected', function (data) {
+  console.log('playerDisconnected', data);
   Materialize.toast(data.player + ' disconnected.', 4000);
 });
 
 socket.on('hostRoom', function (data) {
+  console.log('hostRoom', data);
   if (data != undefined) {
     if (data.players.length >= 11) {
       $('#hostModalContent').html(
@@ -95,6 +97,7 @@ socket.on('hostRoom', function (data) {
 });
 
 socket.on('hostRoomUpdate', function (data) {
+  console.log('hostRoomUpdate', data);
   $('#playersNames').html(
     data.players.map(function (p) {
       return '<span>' + p + '</span><br />';
@@ -147,6 +150,8 @@ socket.on('joinRoom', function (data) {
 });
 
 socket.on('dealt', function (data) {
+  console.log('dealt', data);
+  $('#gameDiv').show();
   $('#mycards').html(
     data.cards.map(function (c) {
       return renderCard(c);
@@ -157,6 +162,7 @@ socket.on('dealt', function (data) {
 });
 
 socket.on('rerender', function (data) {
+  console.log('rerender', data);
   if (data.myBet == 0) {
     $('#usernamesCards').text(data.username + ' - My Cards');
   } else {
@@ -209,6 +215,7 @@ socket.on('rerender', function (data) {
 });
 
 socket.on('gameBegin', function (data) {
+  console.log('gameBegin', data);
   $('#navbar-ptwu').hide();
   $('#joinModal').closeModal();
   $('#hostModal').closeModal();
@@ -220,10 +227,12 @@ socket.on('gameBegin', function (data) {
 });
 
 function playNext() {
+  console.log('playNext');
   socket.emit('startNextRound', {});
 }
 
 socket.on('reveal', function (data) {
+  console.log('reveal', data);
   $('#usernameFold').hide();
   $('#usernameCheck').hide();
   $('#usernameBet').hide();
@@ -256,6 +265,7 @@ socket.on('reveal', function (data) {
 });
 
 socket.on('endHand', function (data) {
+  console.log('endHand', data);
   $('#usernameFold').hide();
   $('#usernameCheck').hide();
   $('#usernameBet').hide();
@@ -301,6 +311,7 @@ var beginHost = function () {
     $('#joinButton').removeClass('disabled');
   } else {
     socket.emit('host', { username: $('#hostName-field').val() });
+    console.log('hosting with username', $('#hostName-field').val());
     $('#joinButton').addClass('disabled');
     $('#joinButton').off('click');
   }
@@ -328,15 +339,18 @@ var joinRoom = function () {
     });
     $('#hostButton').addClass('disabled');
     $('#hostButton').off('click');
+    console.log('joining with username', $('#joinName-field').val());
   }
 };
 
 var startGame = function (gameCode) {
   socket.emit('startGame', { code: gameCode });
+  console.log('starting game with code', gameCode);
 };
 
 var fold = function () {
   socket.emit('moveMade', { move: 'fold', bet: 'Fold' });
+  console.log('fold', { move: 'fold', bet: 'Fold' });
 };
 
 var bet = function () {
@@ -349,15 +363,21 @@ var bet = function () {
       move: 'bet',
       bet: parseInt($('#betRangeSlider').val()),
     });
+    console.log('bet', {
+      move: 'bet',
+      bet: parseInt($('#betRangeSlider').val()),
+    });
   }
 };
 
 function call() {
   socket.emit('moveMade', { move: 'call', bet: 'Call' });
+  console.log('call', { move: 'call', bet: 'Call' });
 }
 
 var check = function () {
   socket.emit('moveMade', { move: 'check', bet: 'Check' });
+  console.log('check', { move: 'check', bet: 'Check' });
 };
 
 var raise = function () {
@@ -370,6 +390,10 @@ var raise = function () {
     );
   } else {
     socket.emit('moveMade', {
+      move: 'raise',
+      bet: parseInt($('#raiseRangeSlider').val()),
+    });
+    console.log('raise', {
       move: 'raise',
       bet: parseInt($('#raiseRangeSlider').val()),
     });
@@ -797,14 +821,17 @@ socket.on('updateRaiseModal', function (data) {
     max: data.usernameMoney,
     min: data.topBet,
   });
+  console.log('updateRaiseModal', data);
 });
 
 function updateRaiseModal() {
   document.getElementById('raiseRangeSlider').value = 0;
   socket.emit('raiseModalData', {});
+  console.log('updateRaiseModal');
 }
 
 socket.on('displayPossibleMoves', function (data) {
+  console.log('displayPossibleMoves', data);
   if (data.fold == 'yes') $('#usernameFold').show();
   else $('#usernameHide').hide();
   if (data.check == 'yes') $('#usernameCheck').show();
@@ -833,6 +860,7 @@ function renderSelf(data) {
     $('#status').text('My Turn');
     Materialize.toast('My Turn', 4000);
     socket.emit('evaluatePossibleMoves', {});
+    console.log('evaluatePossibleMoves');
   } else if (data.text == 'Fold') {
     $('#status').text('You Folded');
     $('#playerInformationCard').removeClass('green');
