@@ -310,8 +310,8 @@ var beginHost = function () {
     );
     $('#joinButton').removeClass('disabled');
   } else {
-    socket.emit('host', { username: $('#hostName-field').val() });
-    console.log('hosting with username', $('#hostName-field').val());
+    socket.emit('host', { username: $('#hostName-field').val(), money: $('#hostMoney-field').val() });
+    console.log('hosting with username', $('#hostName-field').val(), $('#hostMoney-field').val());
     $('#joinButton').addClass('disabled');
     $('#joinButton').off('click');
   }

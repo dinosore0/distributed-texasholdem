@@ -1,9 +1,10 @@
-const Player = function (playerName, socket, debug) {
+const Player = function (playerName, socket, debug, money = 100) {
+  console.log('Player constructor', { playerName, socketId: socket.id, debug, money });
   this.username = playerName;
   this.cards = [];
   this.socket = socket;
   this.currentCard = null;
-  this.money = 100;
+  this.money = money;
   this.buyIns = 0;
   this.status = '';
   this.blindValue = '';

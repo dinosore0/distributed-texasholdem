@@ -3,7 +3,7 @@ const Deck = require('./deck.js');
 const Player = require('./player.js');
 const Hand = require('pokersolver').Hand;
 
-const Game = function (name, host) {
+const Game = function (name, host, money = 100) {
   this.deck = new Deck();
   this.host = host;
   this.players = [];
@@ -12,6 +12,7 @@ const Game = function (name, host) {
   this.currentlyPlayed = 0;
   this.gameWinner = null;
   this.gameName = name;
+  this.money = money;
   this.roundNum = 0;
   this.roundData = {
     dealer: 0,
@@ -686,7 +687,7 @@ const Game = function (name, host) {
   };
 
   this.addPlayer = (playerName, socket) => {
-    const player = new Player(playerName, socket, this.debug);
+    const player = new Player(playerName, socket, this.debug, this.money);
     this.players.push(player);
     return player;
   };

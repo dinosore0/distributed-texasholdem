@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
           Math.floor(Math.random() * 10) +
           Math.floor(Math.random() * 10);
       } while (rooms.length != 0 && rooms.some((r) => r.getCode() === code));
-      const game = new Game(code, data.username);
+      const game = new Game(code, data.username, data.money);
       rooms.push(game);
       game.addPlayer(data.username, socket);
       game.emitPlayers('hostRoom', {
@@ -54,10 +54,8 @@ io.on('connection', (socket) => {
       data.username == undefined ||
       data.username.length > 12
     ) {
-      console.log('case 1', game);
       socket.emit('joinRoom', undefined);
     } else {
-      console.log('case 2', game);
       game.addPlayer(data.username, socket);
       rooms = rooms.map((r) => (r.getCode() === data.code ? game : r));
       game.emitPlayers('joinRoom', {
